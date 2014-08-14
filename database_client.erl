@@ -25,5 +25,6 @@ me(Message)->tell:tell(database_client, Message).
 
 received(request, Pid, stop)->tell:reply(Pid, ok);
 % received stop
-received(request, Pid, {get, Key})->tell:reply(Pid, Key).
+received(request, Pid, {get, Key})->tell:tell(database, {get, Key}), loop().
 % received request to get key
+% to this with a queue
