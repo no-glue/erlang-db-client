@@ -4,32 +4,26 @@
 start()->register(database_client, spawn(database_client, init, [])).
 % start database client
 
+stop()->me(stop).
+% tell me to stop
+
+get_key(Key)->me({get, Key}).
+% tell me to get key
+
 init()->loop().
 % start looping and receiveing messages
 
 loop()->
   receive
     {request, Pid, Message}->
-      received(request, Pid, Message);
-    {reply, Message}->
-      received_reply(Message)
+      received(request, Pid, Message)
   end.
 % loop and receive messages
-
-received(request, Pid, stop)->tell:reply(Pid, ok).
-% stop client
-
-received_reply(Message)->io:format(Message), loop().
-% received reply
 
 me(Message)->tell:tell(database_client, Message).
 % tell me something
 
-stop()->me(stop).
-% tell me to stop
-
-tell_database(Message)->tell:tell_from(database, Message, database_client).
-% tell something database
-
-get_key(Key)->tell_database({get, [Key]}).
-% get key value from database
+received(request, Pid, stop)->tell:reply(Pid, ok);
+% received stop
+received(request, Pid, {get, Key})->tell:reply(Pid, Key).
+% received request to get key
